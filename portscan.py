@@ -33,7 +33,7 @@ def port_s(ip,port):
                                   or
                                   x.haslayer(TCP) and x[IP].dst == self.local_ip1 and x[IP].src == self.destination_ip1 and x[
                                       TCP].flags == 'RA'
-                , prn=self.prn, timeout=30)
+                , prn=self.prn, timeout=10)
 
         def output(self):
 
@@ -54,15 +54,19 @@ def port_s(ip,port):
                 self.all_port.append(p)
                 self.all_status.append('closed')
 
+
+            # print(self.open_port_list1)
             for i in self.open_port_list1:
                 if i in self.port:
                     self.port.remove(i)
+            # print(port)
             for i in self.close_port_list1:
                 if i in self.port:
                     self.port.remove(i)
             print('[+]The filtered port:')
             if not self.port:
                 print('None')
+            # print(port)
             for p in self.port:
                 print('--->'+str(p) + ' filtered')
                 self.all_port.append(p)
@@ -85,18 +89,34 @@ def port_s(ip,port):
 
     _ip = ip
     port1 = []
-    if  port:
-        for i in port:
-            port1.append(int(i))
-    else:
-        port1 = [22, 80, 443, 445, 21, 23 ,8080, 3389, 1433, 3306]
+
+
+    try:
+        if len(port) == 1 and '-' in port[0]:
+            g = int(port[0][0:1])
+            c = int(port[0][2:]) + 1
+            for i in range(g,c):
+                port1.append(i)
+        elif  port:
+            for i in port:
+                port1.append(int(i))
+        else:
+            port1 = [22, 80, 443, 445, 21, 23 ,8080, 3389, 1433, 3306]
+    except:
+        pass
+    # print(port1)
+    # port1 = [22, 80, 443, 445, 21, 23, 8080, 3389, 1433, 3306]
+
     local_ip = get_host_ip()
     ipArray = []
     open_port_list = []
     close_port_list = []
-    # portArray = [port1[i:i + 3] for i in range(0, len(port1), 3)]
-    portArray = port1
-    print(portArray)
+    portArray = [port1[i:i + 3] for i in range(0, len(port1), 3)]
+    # portArray = port1
+    # print(portArray)
+    port2 = []
+    for i in port1:
+        port2.append(str(i))
 
     for i in _ip:   # data processing
         ipArray.extend([str(i) for i in  netaddr.IPNetwork(i)])
@@ -106,7 +126,7 @@ def port_s(ip,port):
             send(IP(dst=i)/TCP(dport=j, flags=2), verbose=False)
 
     for i in _ip:
-        demo = receive_package(l_ip=local_ip, d_ip=i, o_p_l=open_port_list, c_p_l=close_port_list, c_port=portArray)
+        demo = receive_package(l_ip=local_ip, d_ip=i, o_p_l=open_port_list, c_p_l=close_port_list, c_port=port2)
         demo.run()
         demo.output()
         final_port.extend(demo.all_port)
@@ -114,4 +134,4 @@ def port_s(ip,port):
 
     file_operation.file_operate(ip,final_port,final_state,'port')
 
-# port_s(['39.156.66.14'],['80'])
+# port_s(['39.156.66.14'],['1-80'])
