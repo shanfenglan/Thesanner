@@ -141,8 +141,12 @@ def main():
 if __name__ == '__main__':
     time = Timer.Mytimer()
     time.start()
-
-    main()
+    try:
+        main()
+    except:
+        print(
+            '\n[-]Error: if your computer system is *nix,please execute this program by root privilege.exp:sudo python3 Thescanner.py\n'
+            'if your computer system is windows,please open terminal by using Administrator privilege\n\n')
     print('\n\033[1;36;40m--------------------------------------------------------------------------------\033[0m')
     time.stop()
     print('\n\n[-]The scanning is over.\n')
