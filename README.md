@@ -8,7 +8,7 @@ thank you so much.
 # Usage:
    
 ```
-  python3 Thescanner.py -h  
+  sudo python3 Thescanner.py -h  
 
         
      ____ 
